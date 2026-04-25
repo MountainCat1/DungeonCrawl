@@ -8,7 +8,7 @@ public class MapDisplay : MonoBehaviour
 {
     [Inject] private IDungeonManager _dungeonManager;
     
-    [SerializeField] private GameObject roomUIPrefab;
+    [SerializeField] private DungeonRoomDisplayUI roomUIPrefab;
     [SerializeField] private GameObject connectionUIPrefab;
     [SerializeField] private Transform roomUIParent;
 
@@ -32,10 +32,12 @@ public class MapDisplay : MonoBehaviour
         // draw rooms
         foreach (var room in dungeon.Rooms)
         {
-            var go = Instantiate(roomUIPrefab, roomUIParent);
-            var rect = go.GetComponent<RectTransform>();
+            var dungeonRoomDisplay = Instantiate(roomUIPrefab, roomUIParent);
+            var rect = dungeonRoomDisplay.GetComponent<RectTransform>();
 
             rect.anchoredPosition = ToUIPos(room.Position);
+            
+            dungeonRoomDisplay.Initialize(room);
         }
 
         // draw connections

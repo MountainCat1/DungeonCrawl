@@ -1245,9 +1245,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fcf8e329936c4144af5712575d86aa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomUIPrefab: {fileID: 956888160271722029, guid: 3ee521e52beae2f43b5140e9cad5c14b, type: 3}
+  roomUIPrefab: {fileID: 3237517776187770775, guid: 3ee521e52beae2f43b5140e9cad5c14b, type: 3}
+  connectionUIPrefab: {fileID: 956888160271722029, guid: bc897a3c81bdcbb498bb49e0bb97fdd8, type: 3}
   roomUIParent: {fileID: 728887111}
-  cellSize: 50
+  cellSize: 100
 --- !u!1 &1425966959
 GameObject:
   m_ObjectHideFlags: 0
@@ -1400,6 +1401,7 @@ MonoBehaviour:
   targetRooms: 15
   maxNeighbors: 3
   seed: 0
+  extraConnectionChance: 0.15
 --- !u!114 &1495579448
 MonoBehaviour:
   m_ObjectHideFlags: 0
