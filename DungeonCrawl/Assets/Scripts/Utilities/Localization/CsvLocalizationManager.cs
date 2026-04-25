@@ -31,6 +31,7 @@ public class CsvLocalizationManager : MonoBehaviour
     public TMP_FontAsset CurrentFontAsset { get; private set; }
     
     public bool FallbackToDefaultLanguage { get; private set; } = true;
+    public bool UseWarningMessages { get; private set; } = false;
     public ICollection<string> AvailableLanguages { get; private set; } = new List<string>();
     public event Action LanguageChanged;
     public event Action FontChanged;
@@ -132,8 +133,11 @@ public class CsvLocalizationManager : MonoBehaviour
 
         if (FallbackToDefaultLanguage && _fallbackTexts.TryGetValue(key, out var fallback))
             return fallback;
+        
+        if(UseWarningMessages)
+            return $"<missing:{key}>";
 
-        return $"<missing:{key}>";
+        return key;
     }
 
     /// <summary>

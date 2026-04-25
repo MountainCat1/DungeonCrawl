@@ -2,8 +2,11 @@ using UnityEngine;
 
 namespace DefaultNamespace.Cards
 {
-    public class Card : MonoBehaviour
+    [CreateAssetMenu(fileName = "New Card", menuName = "Custom/Card")]
+    public class Card : ScriptableObject
     {
-        public string NameLocalization { get; set; }
+        [field: SerializeField] public string NameTag { get; set; }
+        [field: SerializeField] public string DescriptionTag { get; set; }
+        [field: SerializeField] public Sprite Sprite { get; set; }
     }
 }
