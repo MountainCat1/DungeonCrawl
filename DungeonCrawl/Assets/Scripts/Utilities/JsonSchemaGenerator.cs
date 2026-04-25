@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Newtonsoft.Json;
 
 namespace DefaultNamespace.Utilities
 {
