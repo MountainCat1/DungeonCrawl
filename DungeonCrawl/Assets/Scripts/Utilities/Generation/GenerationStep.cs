@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Generation
 {
-
     public abstract class GenerationStep : MonoBehaviour
     {
         

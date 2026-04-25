@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using DefaultNamespace.Systems;
+using DefaultNamespace.Systems.Data;
 using Systems.Dungeon;
 using Systems.Dungeon.Data;
 using UnityEngine;
@@ -7,15 +9,40 @@ using Zenject;
 public class MapDisplay : MonoBehaviour
 {
     [Inject] private IDungeonManager _dungeonManager;
-    
+    [Inject] private IPlayerManager _playerManager;
+    [Inject] private ISpawnManager _spawnManager;
+
     [SerializeField] private DungeonRoomDisplayUI roomUIPrefab;
     [SerializeField] private GameObject connectionUIPrefab;
     [SerializeField] private Transform roomUIParent;
+    [SerializeField] private GameObject playerMarker;
 
     [SerializeField] private float cellSize = 50f;
+
+    private GameObject _playerMarkerInstance;
+    private readonly List<DungeonRoomDisplayUI> _roomDisplays = new();
+
+
     private void Start()
     {
-        _dungeonManager.OnDungeonGenerated += OnDungeonGenerated;
+        _dungeonManager.DungeonGenerated += OnDungeonGenerated;
+        _playerManager.PlayerChanged += OnPlayerChanged;
+    }
+
+    private void OnPlayerChanged(PlayerData playerData)
+    {
+        if (_playerMarkerInstance != null)
+            Destroy(_playerMarkerInstance);
+
+        _playerMarkerInstance = _spawnManager.Spawn(playerMarker, roomUIParent);
+        var rect = _playerMarkerInstance.GetComponent<RectTransform>();
+
+        var roomDisplay = _roomDisplays.Find(d => d.DungeonRoom == playerData.CurrentRoom);
+
+        if (roomDisplay == null)
+            throw new System.Exception("Current room display not found");
+        
+        rect.anchoredPosition = roomDisplay.GetComponent<RectTransform>().anchoredPosition;
     }
 
     private void OnDungeonGenerated(Dungeon dungeon)
@@ -29,19 +56,21 @@ public class MapDisplay : MonoBehaviour
         foreach (Transform child in roomUIParent)
             Destroy(child.gameObject);
 
+        _roomDisplays.Clear();
+
         // draw rooms
         foreach (var room in dungeon.Rooms)
         {
-            var dungeonRoomDisplay = Instantiate(roomUIPrefab, roomUIParent);
+            var dungeonRoomDisplay = _spawnManager.Spawn(roomUIPrefab, roomUIParent);
             var rect = dungeonRoomDisplay.GetComponent<RectTransform>();
 
             rect.anchoredPosition = ToUIPos(room.Position);
-            
+
             dungeonRoomDisplay.Initialize(room);
+            _roomDisplays.Add(dungeonRoomDisplay);
         }
 
         // draw connections
-
         var drawn = new HashSet<(DungeonRoom, DungeonRoom)>();
 
         foreach (var room in dungeon.Rooms)
@@ -59,10 +88,10 @@ public class MapDisplay : MonoBehaviour
             }
         }
     }
-    
+
     private void DrawConnection(DungeonRoom a, DungeonRoom b)
     {
-        var go = Instantiate(connectionUIPrefab, roomUIParent);
+        var go = _spawnManager.Spawn(connectionUIPrefab, roomUIParent);
         var rect = go.GetComponent<RectTransform>();
 
         var posA = ToUIPos(a.Position);
@@ -80,7 +109,7 @@ public class MapDisplay : MonoBehaviour
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         rect.localRotation = Quaternion.Euler(0, 0, angle);
     }
-    
+
     private Vector2 ToUIPos(Vector2Int gridPos)
     {
         return new Vector2(

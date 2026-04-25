@@ -10,11 +10,11 @@ namespace Systems.Dungeon
 {
     public interface IDungeonManager
     {
-        void GenerateDungeon();
+        Data.Dungeon GenerateDungeon();
 
         Data.Dungeon Dungeon { get;  }
         
-        event Action<Data.Dungeon> OnDungeonGenerated;
+        event Action<Data.Dungeon> DungeonGenerated;
     }
 
     public class DungeonManager : MonoBehaviour, IDungeonManager
@@ -22,9 +22,9 @@ namespace Systems.Dungeon
         [SerializeField] private MultistepGeneration generation;
         
         public Data.Dungeon Dungeon { get; private set; }
-        public event Action<Data.Dungeon> OnDungeonGenerated;
+        public event Action<Data.Dungeon> DungeonGenerated;
 
-        public void GenerateDungeon()
+        public Data.Dungeon GenerateDungeon()
         {
             var generationResult = generation.Generate<DungeonGenerationContext>();
 
@@ -58,7 +58,9 @@ namespace Systems.Dungeon
 
             Dungeon = dungeon;
 
-            OnDungeonGenerated?.Invoke(dungeon);
+            DungeonGenerated?.Invoke(dungeon);
+
+            return Dungeon;
         }
     }
 }

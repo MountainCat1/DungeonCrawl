@@ -1,3 +1,4 @@
+using DefaultNamespace.Systems;
 using Systems.Dungeon;
 using Zenject;
 
@@ -7,12 +8,20 @@ namespace DefaultNamespace
     {
         public override void InstallBindings()
         {
+            RegisterFloatingService<ISpawnManager, SpawnManager>();
+            
             RegisterService<IDungeonManager, DungeonManager>();
+            RegisterService<IPlayerManager, PlayerManager>();
         }
 
         private void RegisterService<TService, TImplementation>() where TImplementation : TService
         {
             Container.Bind<TService>().To<TImplementation>().FromComponentsInHierarchy().AsSingle();
+        }
+        
+        private void RegisterFloatingService<TService, TImplementation>() where TImplementation : TService
+        {
+            Container.Bind<TService>().To<TImplementation>().FromNew().AsSingle();
         }
     }
 }
