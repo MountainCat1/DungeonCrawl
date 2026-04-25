@@ -1292,7 +1292,7 @@ MonoBehaviour:
   roomUIPrefab: {fileID: 3237517776187770775, guid: 3ee521e52beae2f43b5140e9cad5c14b, type: 3}
   connectionUIPrefab: {fileID: 956888160271722029, guid: bc897a3c81bdcbb498bb49e0bb97fdd8, type: 3}
   roomUIParent: {fileID: 728887111}
-  playerMarker: {fileID: 0}
+  playerMarker: {fileID: 956888160271722029, guid: b6bc2d2cb494e454ba5cd7b53376adab, type: 3}
   cellSize: 100
 --- !u!1 &1425966959
 GameObject:

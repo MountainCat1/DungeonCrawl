@@ -1,38 +1,25 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using Zenject;
 
-namespace DefaultNamespace
+namespace Utilities
 {
     public static class JsonService
     {
-        public static string Serialize(object json)
+        private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
-            return JsonConvert.SerializeObject(
-                json,
-                Formatting.Indented,
-                new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    Converters = new List<JsonConverter>
-                    {
-                        new Vector2Converter()
-                    }
-                }
-            );
+            TypeNameHandling = TypeNameHandling.All,
+            Formatting = Formatting.Indented,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
+        
+        public static string Serialize<T>(T obj)
+        {
+            return JsonConvert.SerializeObject(obj, _jsonSerializerSettings);
         }
-
+        
         public static T Deserialize<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(
-                json,
-                new JsonSerializerSettings
-                {
-                    Converters = new List<JsonConverter>
-                    {
-                        new Vector2Converter()
-                    }
-                }
-            );
+            return JsonConvert.DeserializeObject<T>(json, _jsonSerializerSettings);
         }
     }
 }
