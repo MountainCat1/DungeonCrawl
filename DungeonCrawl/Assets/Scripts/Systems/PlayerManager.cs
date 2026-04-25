@@ -1,7 +1,6 @@
 using System;
 using DefaultNamespace.Systems.Base;
 using DefaultNamespace.Systems.Data;
-using Systems.Dungeon.Data;
 
 namespace DefaultNamespace.Systems
 {

@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEditor;
 using TMPro;
-using System.IO;
 
 namespace Utilities.Editor
 {
