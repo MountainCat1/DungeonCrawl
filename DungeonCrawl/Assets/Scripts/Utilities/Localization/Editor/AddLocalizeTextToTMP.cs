@@ -1,9 +1,9 @@
 #if UNITY_EDITOR
-using UnityEngine;
-using UnityEditor;
 using TMPro;
+using UnityEditor;
+using UnityEngine;
 
-namespace Utilities.Editor
+namespace Utilities.Localization.Editor
 {
     public class AddLocalizeTextToTMP : EditorWindow
     {
@@ -14,7 +14,7 @@ namespace Utilities.Editor
             int countPrefabs = 0;
 
             // Scene objects
-            TMP_Text[] allSceneTexts = GameObject.FindObjectsOfType<TMP_Text>(true);
+            TMP_Text[] allSceneTexts = Object.FindObjectsByType<TMP_Text>(FindObjectsSortMode.None);
             foreach (TMP_Text tmp in allSceneTexts)
             {
                 if (tmp.GetComponent<LocalizeText>() == null)
@@ -29,7 +29,6 @@ namespace Utilities.Editor
             foreach (string guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 bool changed = false;
 
                 // Load prefab contents (safe editing)
@@ -40,7 +39,7 @@ namespace Utilities.Editor
                 {
                     if (tmp.GetComponent<LocalizeText>() == null)
                     {
-                        Undo.AddComponent<LocalizeText>(tmp.gameObject); // works in editor, tracks changes
+                        tmp.gameObject.AddComponent<LocalizeText>();
                         changed = true;
                         countPrefabs++;
                     }

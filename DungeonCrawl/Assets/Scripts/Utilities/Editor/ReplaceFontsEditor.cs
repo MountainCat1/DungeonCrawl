@@ -1,154 +1,155 @@
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.UI;
 using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class ReplaceFontsEditor : EditorWindow
+namespace Utilities.Editor
 {
-    private Font uiFont;
-    private TMP_FontAsset tmpFont;
-
-    private bool replaceUIText = true;
-    private bool replaceTMPUGUI = true;
-    private bool replaceTMP3D = true;
-
-    [MenuItem("Tools/Replace Fonts In Scene & Prefabs")]
-    public static void ShowWindow()
+    public class ReplaceFontsEditor : EditorWindow
     {
-        GetWindow<ReplaceFontsEditor>("Replace Fonts");
-    }
+        private Font _uiFont;
+        private TMP_FontAsset _tmpFont;
 
-    private void OnGUI()
-    {
-        GUILayout.Label("Font Replacement Tool", EditorStyles.boldLabel);
+        private bool _replaceUIText = true;
+        private bool _replaceTmpugui = true;
+        private bool _replaceTMP3D = true;
 
-        uiFont = (Font)EditorGUILayout.ObjectField("UI Font", uiFont, typeof(Font), false);
-        tmpFont = (TMP_FontAsset)EditorGUILayout.ObjectField("TMP Font Asset", tmpFont, typeof(TMP_FontAsset), false);
-
-        EditorGUILayout.Space();
-        GUILayout.Label("Replace in:", EditorStyles.boldLabel);
-        replaceUIText = EditorGUILayout.Toggle("UI Text", replaceUIText);
-        replaceTMPUGUI = EditorGUILayout.Toggle("TextMeshProUGUI", replaceTMPUGUI);
-        replaceTMP3D = EditorGUILayout.Toggle("TextMeshPro (3D)", replaceTMP3D);
-
-        EditorGUILayout.Space();
-
-        if (GUILayout.Button("Replace Fonts In Scene"))
+        [MenuItem("Tools/Replace Fonts In Scene & Prefabs")]
+        public static void ShowWindow()
         {
-            ReplaceFontsInScene();
+            GetWindow<ReplaceFontsEditor>("Replace Fonts");
         }
 
-        if (GUILayout.Button("Replace Fonts In Prefabs"))
+        private void OnGUI()
         {
-            ReplaceFontsInPrefabs();
-        }
-    }
+            GUILayout.Label("Font Replacement Tool", EditorStyles.boldLabel);
 
-    private void ReplaceFontsInScene()
-    {
-        int count = 0;
+            _uiFont = (Font)EditorGUILayout.ObjectField("UI Font", _uiFont, typeof(Font), false);
+            _tmpFont = (TMP_FontAsset)EditorGUILayout.ObjectField("TMP Font Asset", _tmpFont, typeof(TMP_FontAsset), false);
 
-        if (replaceUIText && uiFont != null)
-        {
-            var uiTexts = GameObject.FindObjectsOfType<Text>(true);
-            foreach (var text in uiTexts)
+            EditorGUILayout.Space();
+            GUILayout.Label("Replace in:", EditorStyles.boldLabel);
+            _replaceUIText = EditorGUILayout.Toggle("UI Text", _replaceUIText);
+            _replaceTmpugui = EditorGUILayout.Toggle("TextMeshProUGUI", _replaceTmpugui);
+            _replaceTMP3D = EditorGUILayout.Toggle("TextMeshPro (3D)", _replaceTMP3D);
+
+            EditorGUILayout.Space();
+
+            if (GUILayout.Button("Replace Fonts In Scene"))
             {
-                Undo.RecordObject(text, "Replace UI Font");
-                text.font = uiFont;
-                EditorUtility.SetDirty(text);
-                count++;
+                ReplaceFontsInScene();
+            }
+
+            if (GUILayout.Button("Replace Fonts In Prefabs"))
+            {
+                ReplaceFontsInPrefabs();
             }
         }
 
-        if (tmpFont != null)
+        private void ReplaceFontsInScene()
         {
-            if (replaceTMPUGUI)
+            int count = 0;
+
+            if (_replaceUIText && _uiFont != null)
             {
-                var tmpUIs = GameObject.FindObjectsOfType<TextMeshProUGUI>(true);
-                foreach (var tmp in tmpUIs)
+                var uiTexts = Object.FindObjectsByType<Text>(FindObjectsSortMode.None);
+                foreach (var text in uiTexts)
                 {
-                    Undo.RecordObject(tmp, "Replace TMP UGUI Font");
-                    tmp.font = tmpFont;
-                    EditorUtility.SetDirty(tmp);
-                    count++;
-                }
-            }
-
-            if (replaceTMP3D)
-            {
-                var tmp3Ds = GameObject.FindObjectsOfType<TextMeshPro>(true);
-                foreach (var tmp in tmp3Ds)
-                {
-                    Undo.RecordObject(tmp, "Replace TMP 3D Font");
-                    tmp.font = tmpFont;
-                    EditorUtility.SetDirty(tmp);
-                    count++;
-                }
-            }
-        }
-
-        Debug.Log($"[Scene] Replaced fonts on {count} text components.");
-    }
-
-    private void ReplaceFontsInPrefabs()
-    {
-        string[] prefabGUIDs = AssetDatabase.FindAssets("t:Prefab");
-        int count = 0;
-
-        foreach (var guid in prefabGUIDs)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (prefab == null) continue;
-
-            bool modified = false;
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-
-            if (replaceUIText && uiFont != null)
-            {
-                foreach (var text in instance.GetComponentsInChildren<Text>(true))
-                {
-                    text.font = uiFont;
+                    Undo.RecordObject(text, "Replace UI Font");
+                    text.font = _uiFont;
                     EditorUtility.SetDirty(text);
-                    modified = true;
                     count++;
                 }
             }
 
-            if (tmpFont != null)
+            if (_tmpFont != null)
             {
-                if (replaceTMPUGUI)
+                if (_replaceTmpugui)
                 {
-                    foreach (var tmp in instance.GetComponentsInChildren<TextMeshProUGUI>(true))
+                    var tmpUIs = Object.FindObjectsByType<TextMeshProUGUI>(FindObjectsSortMode.None);
+                    foreach (var tmp in tmpUIs)
                     {
-                        tmp.font = tmpFont;
+                        Undo.RecordObject(tmp, "Replace TMP UGUI Font");
+                        tmp.font = _tmpFont;
                         EditorUtility.SetDirty(tmp);
-                        modified = true;
                         count++;
                     }
                 }
 
-                if (replaceTMP3D)
+                if (_replaceTMP3D)
                 {
-                    foreach (var tmp in instance.GetComponentsInChildren<TextMeshPro>(true))
+                    var tmp3Ds = Object.FindObjectsByType<TextMeshPro>(FindObjectsSortMode.None);
+                    foreach (var tmp in tmp3Ds)
                     {
-                        tmp.font = tmpFont;
+                        Undo.RecordObject(tmp, "Replace TMP 3D Font");
+                        tmp.font = _tmpFont;
                         EditorUtility.SetDirty(tmp);
-                        modified = true;
                         count++;
                     }
                 }
             }
 
-            if (modified)
-            {
-                PrefabUtility.SaveAsPrefabAsset(instance, path);
-            }
-
-            DestroyImmediate(instance);
+            Debug.Log($"[Scene] Replaced fonts on {count} text components.");
         }
 
-        AssetDatabase.SaveAssets();
-        Debug.Log($"[Prefabs] Replaced fonts on {count} text components.");
+        private void ReplaceFontsInPrefabs()
+        {
+            string[] prefabGUIDs = AssetDatabase.FindAssets("t:Prefab");
+            int count = 0;
+
+            foreach (var guid in prefabGUIDs)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                bool modified = false;
+
+                GameObject root = PrefabUtility.LoadPrefabContents(path);
+
+                if (_replaceUIText && _uiFont != null)
+                {
+                    foreach (var text in root.GetComponentsInChildren<Text>(true))
+                    {
+                        text.font = _uiFont;
+                        EditorUtility.SetDirty(text);
+                        modified = true;
+                        count++;
+                    }
+                }
+
+                if (_tmpFont != null)
+                {
+                    if (_replaceTmpugui)
+                    {
+                        foreach (var tmp in root.GetComponentsInChildren<TextMeshProUGUI>(true))
+                        {
+                            tmp.font = _tmpFont;
+                            EditorUtility.SetDirty(tmp);
+                            modified = true;
+                            count++;
+                        }
+                    }
+
+                    if (_replaceTMP3D)
+                    {
+                        foreach (var tmp in root.GetComponentsInChildren<TextMeshPro>(true))
+                        {
+                            tmp.font = _tmpFont;
+                            EditorUtility.SetDirty(tmp);
+                            modified = true;
+                            count++;
+                        }
+                    }
+                }
+
+                if (modified)
+                {
+                    PrefabUtility.SaveAsPrefabAsset(root, path);
+                }
+
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[Prefabs] Replaced fonts on {count} text components.");
+        }
     }
 }
