@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Generation.Dungeon;
 using UnityEngine;
 
@@ -7,5 +8,7 @@ namespace Systems.Dungeon.Data
     {
         public Vector2Int Position { get; set; }
         public RoomType Type { get; set; }
+        
+        public HashSet<DungeonRoom> Neighbours = new();
     }
 }

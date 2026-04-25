@@ -39,33 +39,32 @@ public class MapDisplay : MonoBehaviour
         }
 
         // draw connections
-        var drawn = new HashSet<(Vector2Int, Vector2Int)>();
 
-        foreach (var kvp in dungeon.Connections)
+        var drawn = new HashSet<(DungeonRoom, DungeonRoom)>();
+
+        foreach (var room in dungeon.Rooms)
         {
-            var from = kvp.Key;
-
-            foreach (var to in kvp.Value)
+            foreach (var neighbour in room.Neighbours)
             {
-                // avoid drawing duplicates (A-B and B-A)
-                var edge = OrderEdge(from, to);
+                var edge = OrderEdge(room, neighbour);
+
                 if (drawn.Contains(edge))
                     continue;
 
                 drawn.Add(edge);
 
-                DrawConnection(from, to);
+                DrawConnection(room, neighbour);
             }
         }
     }
     
-    private void DrawConnection(Vector2Int a, Vector2Int b)
+    private void DrawConnection(DungeonRoom a, DungeonRoom b)
     {
         var go = Instantiate(connectionUIPrefab, roomUIParent);
         var rect = go.GetComponent<RectTransform>();
 
-        var posA = ToUIPos(a);
-        var posB = ToUIPos(b);
+        var posA = ToUIPos(a.Position);
+        var posB = ToUIPos(b.Position);
 
         var mid = (posA + posB) * 0.5f;
         var dir = posB - posA;
@@ -88,9 +87,12 @@ public class MapDisplay : MonoBehaviour
         );
     }
 
-    private (Vector2Int, Vector2Int) OrderEdge(Vector2Int a, Vector2Int b)
+    private (DungeonRoom, DungeonRoom) OrderEdge(DungeonRoom a, DungeonRoom b)
     {
-        return a.x < b.x || (a.x == b.x && a.y < b.y)
+        var pa = a.Position;
+        var pb = b.Position;
+
+        return pa.x < pb.x || (pa.x == pb.x && pa.y < pb.y)
             ? (a, b)
             : (b, a);
     }

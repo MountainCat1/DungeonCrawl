@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Generation;
 using Generation.Dungeon;
@@ -27,22 +28,37 @@ namespace Systems.Dungeon
         {
             var generationResult = generation.Generate<DungeonGenerationContext>();
 
-            var rooms = generationResult.Rooms.Select(x => new DungeonRoom()
+            // map generation rooms -> runtime rooms
+            var roomMap = generationResult.Rooms.ToDictionary(
+                x => x,
+                x => new DungeonRoom
                 {
-                    Position = x,
-                    Type = generationResult.RoomTypes[x]
+                    Position = x.Position,
+                    Type = x.Type
                 }
             );
-            
+
+            // build neighbours directly
+            foreach (var kvp in generationResult.Connections)
+            {
+                var from = roomMap[kvp.Key];
+
+                foreach (var toGen in kvp.Value)
+                {
+                    var to = roomMap[toGen];
+
+                    from.Neighbours.Add(to);
+                    to.Neighbours.Add(from); // ensure bidirectional (safe even if duplicated)
+                }
+            }
+
             var dungeon = new Data.Dungeon(
-                rooms: rooms,
-                connections: generationResult.Connections
+                rooms: roomMap.Values
             );
-            
+
             Dungeon = dungeon;
-            
+
             OnDungeonGenerated?.Invoke(dungeon);
         }
-
     }
 }
