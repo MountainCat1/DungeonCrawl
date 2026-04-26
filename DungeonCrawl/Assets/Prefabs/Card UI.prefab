@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 1214543373741448718}
   - component: {fileID: 4513395503568974649}
   - component: {fileID: 7017815514949788342}
+  - component: {fileID: 2458291821153219607}
   m_Layer: 5
   m_Name: Card UI
   m_TagString: Untagged
@@ -136,8 +137,19 @@ MonoBehaviour:
   nameText: {fileID: 3724055205019641171}
   descriptionText: {fileID: 5307881419406677388}
   iconImage: {fileID: 6963873710492440767}
-  zoomedInView: {fileID: 0}
   normalView: {fileID: 6616191993822042000}
+--- !u!225 &2458291821153219607
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4819137593035089471}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5250411161032738061
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,7 +431,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 50809473610700468}
-  - component: {fileID: 5231813662609450714}
+  - component: {fileID: 6111937415425627471}
   - component: {fileID: 2393411353825738259}
   - component: {fileID: 3327261508172272177}
   - component: {fileID: 1443731228829357715}
@@ -453,7 +465,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &5231813662609450714
+--- !u!225 &6111937415425627471
 CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

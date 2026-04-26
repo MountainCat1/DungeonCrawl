@@ -1,3 +1,4 @@
+using DefaultNamespace.Cards;
 using DefaultNamespace.Systems;
 using Systems.Dungeon;
 using Zenject;
@@ -12,6 +13,7 @@ namespace DefaultNamespace
             
             RegisterService<IDungeonManager, DungeonManager>();
             RegisterService<IPlayerManager, PlayerManager>();
+            RegisterService<ICardPlaySystem, CardPlaySystem>();
         }
 
         private void RegisterService<TService, TImplementation>() where TImplementation : TService
