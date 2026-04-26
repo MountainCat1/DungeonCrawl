@@ -11,17 +11,19 @@ namespace DefaultNamespace.UI
     {
         [Inject] private ISpawnManager _spawnManager;
 
-        [Header("Setup")]
-        [SerializeField] private List<Card> initialCards;
+        [Header("Setup")] [SerializeField] private List<Card> initialCards;
         [SerializeField] private CardUI cardUIPrefab;
+        [SerializeField] private ZoomedCardUI zoomedCardInstance;
         [SerializeField] private Transform cardContainer;
 
-        [Header("Layout")]
-        [SerializeField] private float radius = 500f;
+        [Header("Layout")] [SerializeField] private float radius = 500f;
         [SerializeField] private float maxAngle = 60f; // total spread (degrees)
         [SerializeField] private float offsetY = -500f; // total spread (degrees)
+        [SerializeField] private float moveSpeed = 10f;
+        [SerializeField] private float rotSpeed = 10f;
 
         private readonly List<CardUI> _cards = new();
+        private CardUI _zoomedCard;
 
         private void Start()
         {
@@ -40,9 +42,37 @@ namespace DefaultNamespace.UI
         {
             var cardUI = _spawnManager.Spawn(cardUIPrefab, cardContainer);
             cardUI.Initialize(card);
+            cardUI.OnHoverEnd += OnCardUIHoverEnd;
+            cardUI.OnHoverStart += OnCardUIHoverStart;
 
             _cards.Add(cardUI);
             UpdateLayout();
+        }
+
+        private void OnCardUIHoverStart(CardUI card)
+        {
+            _zoomedCard = card;
+            zoomedCardInstance.Initialize(card);
+            zoomedCardInstance.gameObject.SetActive(true);
+            
+            SetCardUIVisible(card, false);
+        }
+
+        private void SetCardUIVisible(CardUI card, bool b)
+        {
+            var canvasGroup = card.GetComponent<CanvasGroup>();
+            if (canvasGroup != null)
+                canvasGroup.alpha = b ? 1 : 0;
+        }
+
+        private void OnCardUIHoverEnd(CardUI card)
+        {
+            if (_zoomedCard != card)
+                return;
+
+            _zoomedCard = null;
+            zoomedCardInstance.gameObject.SetActive(false);
+            SetCardUIVisible(card, true);
         }
 
         private void UpdateLayout()
@@ -64,13 +94,19 @@ namespace DefaultNamespace.UI
                 float x = Mathf.Sin(rad) * radius;
                 float y = Mathf.Cos(rad) * radius;
 
-                card.localPosition = new Vector3(x, y, 0) + new Vector3(0, offsetY, 0);
 
                 // Make card "point" toward center (container)
                 Vector3 dirToCenter = -card.localPosition;
                 float rotZ = Mathf.Atan2(dirToCenter.y, dirToCenter.x) * Mathf.Rad2Deg + 90f;
 
-                card.localRotation = Quaternion.Euler(0, 0, rotZ);
+
+                Vector3 targetPos = new Vector3(x, y, 0) + new Vector3(0, offsetY, 0);
+                Quaternion targetRot = Quaternion.Euler(0, 0, rotZ);
+
+                // drift toward target
+                card.localPosition = Vector3.Lerp(card.localPosition, targetPos, Time.deltaTime * moveSpeed);
+                card.localRotation = Quaternion.Slerp(card.localRotation, targetRot, Time.deltaTime * rotSpeed);
+
 
                 card.SetSiblingIndex(i);
             }

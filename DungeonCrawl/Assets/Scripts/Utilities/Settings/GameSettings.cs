@@ -13,7 +13,7 @@ public class GameSettings : ISaveable<GameSettings>
     }
 
     public bool FallbackToDefaultLanguage { get; set; }
-    public string Language { get; set; }
+    public string Language { get; set; } = "En";
     public bool UsePixelArtFont { get; set; }
     
 

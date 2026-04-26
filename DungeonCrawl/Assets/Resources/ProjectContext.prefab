@@ -44,7 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 264ed68793c8479da620499d7fd15726, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fontAssets: []
+  fontAssets:
+  - fontType: 1
+    fontAsset: {fileID: 11400000, guid: 01e8a5775c540824c846b39a180bc5c2, type: 2}
+  - fontType: 0
+    fontAsset: {fileID: 11400000, guid: 01e8a5775c540824c846b39a180bc5c2, type: 2}
 --- !u!1 &4779616014213064746
 GameObject:
   m_ObjectHideFlags: 0
